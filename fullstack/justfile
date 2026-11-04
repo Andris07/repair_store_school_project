@@ -78,3 +78,7 @@ jsonserver *ARGS: ensure-env setup-volumes
 # Start database only
 db *ARGS: ensure-env setup-volumes
     docker compose up -d db phpmyadmin {{ARGS}}
+
+# Új shadcn-vue komponens osztályneveinek átírása a Figma-neves tokenekre (pl. just shadcn-migrate button dialog)
+shadcn-migrate +NAMES:
+    cd frontend && bash migrate-shadcn-classes.sh {{NAMES}}
