@@ -19,7 +19,7 @@ const links = [
 </script>
 
 <template>
-  <header class="bg-white">
+  <header class="bg-surface">
     <div class="flex justify-between p-3 border-b-2 flex-wrap">
       <RouterLink to="/" class="flex items-center space-x-3">
         <span class="self-center text-2xl font-semibold">{{ title }}</span>
