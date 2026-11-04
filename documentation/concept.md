@@ -1,5 +1,9 @@
 # Autószerviz-kezelő – Projektterv
 
+> ##### [Figma](https://www.figma.com/design/qqcHvsf7mqzR7BirNndG0L/Aut%C3%B3szerviz-kezel%C5%91-%E2%80%93-Dr%C3%B3tv%C3%A1z?node-id=0-1&t=g8SQTsWLBlxmh7qw-1)
+
+---
+
 ## Tartalomjegyzék
 
 1. [Projekt áttekintése](#1-projekt-áttekintése)
