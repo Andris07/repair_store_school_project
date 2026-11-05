@@ -135,7 +135,7 @@ Az alkalmazás adatainak tárolásához összekapcsolt táblákat tervezünk. Az
 | **Users** | `id`, `name`, `email`, `passwordHash`, `role`, `phone` | Az ügyfelek és a rendszer felhasználóinak adatai. |
 | **Vehicles** | `id`, `userId`, `brand`, `model`, `year`, `licensePlate` | Az ügyfelek gépjárművei. |
 | **Employees** | `id`, `userId`, `specialization` | A szerviz dolgozóinak adatai. |
-| **Services** | `id`, `name`, `description`, `price` | A szervizben elérhető szolgáltatások. |
+| **Services** | `id`, `name`, `description`, `price`, `minDuration`, `maxDuration` | A szervizben elérhető szolgáltatások. |
 | **Appointments** | `id`, `userId`, `vehicleId`, `serviceId`, `appointmentDate`, `status` | Az ügyfelek időpontfoglalásai. |
 | **Repairs** | `id`, `appointmentId`, `employeeId`, `description`, `status` | A foglalásokhoz tartozó javítási munkák. |
 
