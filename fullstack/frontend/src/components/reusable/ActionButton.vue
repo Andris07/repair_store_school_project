@@ -1,6 +1,6 @@
 <script setup>
-import { computed } from `vue`;
-import { resolveColor } from `@utils/resolveColor.mjs`;
+import { computed } from 'vue';
+import { resolveColor } from '@utils/resolveColor.mjs';
 
 const props = defineProps({
   action:
