@@ -404,3 +404,211 @@ A `BaseLayout` a Vue `slot` elemével jeleníti meg a használatakor közrefogot
 - A `role` és a `userName` paraméterekkel szabályozható az oldalsáv tartalma.
 - A kijelentkezés tényleges végrehajtását a `BaseLayout` szülő komponensének kell megvalósítania.
 - Az oldalak saját tartalmát a komponens nyitó és záró tagje közé kell elhelyezni.
+
+## Autentikációs komponensek
+
+### [AuthLayout.vue](../fullstack/frontend/src/layouts/AuthLayout.vue)
+
+Az autentikációs oldalak (bejelentkezés és regisztráció) közös, kétoszlopos elrendezését biztosítja.
+
+- **Bal oldali panel:** Márkaelemeket és a weboldal arculatát jeleníti meg.
+- **Jobb oldali panel:** A tényleges autentikációs tartalmat jeleníti meg a `slot` segítségével.
+- **Reszponzivitás:** 1280 px alatti képernyőszélességnél a bal oldali márkapanel eltűnik, és a logó a kártya fölött jelenik meg.
+- **Téma:** A jobb felső sarokban található gombbal váltható a világos és sötét megjelenés.
+
+### [AuthCard.vue](../fullstack/frontend/src/components/auth/AuthCard.vue)
+
+Az autentikációs oldalak központi kártyakomponense. Kezeli a bejelentkezési és regisztrációs űrlap közötti váltást, valamint megjeleníti az aktuális űrlapot és az ahhoz tartozó visszajelzéseket.
+
+**Főbb funkciók:**
+- Bejelentkezési és regisztrációs fülek.
+- Az aktuális módnak megfelelő cím és űrlap megjelenítése.
+- Betöltési állapot, hibaüzenet és értesítés megjelenítése.
+- Az űrlap alatti kiegészítő tartalom megjelenítése.
+
+A fülek valódi `/login` és `/register` útvonalakra mutató linkek. Az URL mindig követi az aktuális űrlapot, így a böngésző vissza gombja is megfelelően működik.
+
+**Használat:**
+```vue
+<AuthCard
+  mode="login"
+  :loading="loading"
+  :error="error"
+  @login="handleLogin"
+/>
+```
+
+Regisztráció esetén a `mode="register"` és az `@register` esemény használható.
+
+**Props:**
+| Prop | Típus | Leírás |
+|---|---|---|
+| `mode` | `login \| register` | Meghatározza, melyik űrlap jelenjen meg. |
+| `loading` | `Boolean` | Betöltési állapot. |
+| `error` | `String` | Megjelenítendő hibaüzenet. |
+| `notice` | `String` | Megjelenítendő értesítés. |
+
+**Események:**
+| Esemény | Leírás |
+|---|---|
+| `login` | Bejelentkezési adatok továbbítása. |
+| `register` | Regisztrációs adatok továbbítása. |
+| `forgot-password` | Elfelejtett jelszó folyamat indítása. |
+
+### [LoginForm.vue](../fullstack/frontend/src/components/auth/LoginForm.vue)
+
+A bejelentkezési űrlap mezőit és azok kezelését biztosítja.
+
+**Mezők:**
+- E-mail-cím
+- Jelszó
+- Emlékezz rám jelölőnégyzet
+
+A komponens önállóan nem kommunikál a backenddel. Sikeres validáció után `submit` eseményt bocsát ki a megadott adatokkal.
+
+**Kibocsátott adatok:**
+```js
+{
+  email,
+  password,
+  remember
+}
+```
+
+**Props:**
+| Prop | Típus | Leírás |
+|---|---|---|
+| `loading` | `Boolean` | Betöltési állapot. |
+| `error` | `String` | Megjelenítendő hibaüzenet. |
+
+**Események:**
+- `submit`: A bejelentkezési adatok továbbítása.
+- `forgot-password`: Elfelejtett jelszó folyamat indítása.
+
+A tényleges bejelentkezést a szülőoldal (például `login.vue`) végzi az `utils/auth.mjs` segítségével.
+
+### [RegisterForm.vue](../fullstack/frontend/src/components/auth/RegisterForm.vue)
+
+A regisztrációs űrlap mezőit és azok kezelését biztosítja.
+
+**Mezők:**
+- Név
+- E-mail-cím
+- Telefonszám
+- Jelszó
+- Jelszó megerősítése
+
+A komponens nem kommunikál közvetlenül a backenddel. Sikeres validáció után `submit` eseményt bocsát ki.
+
+**Kibocsátott adatok:**
+```js
+{
+  name,
+  email,
+  phone,
+  password
+}
+```
+
+A jelszó megerősítése nem kerül továbbításra. Ha a telefonszám mező üres, értéke `null`.
+
+A felhasználói szerepkört a backend állítja be, ezért azt a frontend nem küldi el.
+
+**Props:**
+| Prop | Típus | Leírás |
+|---|---|---|
+| `loading` | `Boolean` | Betöltési állapot. |
+| `error` | `String` | Megjelenítendő hibaüzenet. |
+
+**Események:**
+- `submit`: A regisztrációs adatok továbbítása.
+
+A tényleges regisztrációt a szülőoldal (például `register.vue`) végzi az `utils/auth.mjs` segítségével.
+
+### [FormField.vue](../fullstack/frontend/src/components/reusable/FormField.vue)
+
+Újrafelhasználható űrlapmező-komponens, amely egységes megjelenést biztosít a címkével, beviteli mezővel, súgóval és hibaüzenettel együtt.
+
+**Főbb funkciók:**
+- Címke és beviteli mező összekapcsolása.
+- Súgó- és hibaüzenetek megjelenítése.
+- Jelszó típusú mezőknél a jelszó láthatóságának kapcsolása.
+- Akadálymentesség: a címke, súgó és hibaüzenet egyedi azonosítókkal kapcsolódik a mezőhöz a `useId` segítségével.
+
+**Használat:**
+```vue
+<FormField
+  v-model="email"
+  label="E-mail-cím"
+  type="email"
+  placeholder="pelda@email.com"
+  :error="errors.email"
+/>
+```
+
+A validációt nem maga a komponens végzi. A hibaüzenetet a szülőkomponens adja át.
+
+### [validators.mjs](../fullstack/frontend/src/utils/validators.mjs)
+
+Vue-től független, egyszerű JavaScript validációs segédfüggvényeket tartalmaz. A validációs logika így külön is tesztelhető és más komponensekben is újrafelhasználható.
+
+**Szabályok felépítése:**
+
+Minden validációs szabály egy függvény, amely megkapja az ellenőrizendő értéket és az űrlap összes aktuális értékét:
+
+```js
+(value, allFormValues) => true | 'Hibaüzenet'
+```
+
+- `true`: az érték megfelel a szabálynak.
+- Szöveg: a megjelenítendő hibaüzenet.
+
+**A `validate(values, schema)` függvény:**
+
+Az űrlap értékeit a megadott sémával ellenőrzi, majd hibaobjektumot ad vissza.
+
+```js
+{
+  email: 'Érvénytelen e-mail-cím.',
+  password: 'A jelszó túl rövid.'
+}
+```
+
+Ha nincs hiba, üres objektumot (`{}`) ad vissza.
+
+A szabályok felépítése kompatibilis lehet például a `vee-validate` validációs szabályaival is.
+
+### [auth.mjs](../fullstack/frontend/src/utils/auth.mjs)
+
+Az autentikációs műveletekhez tartozó API-hívások helye. A bejelentkezési és regisztrációs oldalak ezt a modult használják a backenddel való kommunikációhoz.
+
+Jelenleg a függvények előkészített helyőrzők, a tényleges backend-integráció itt valósítható meg.
+
+**Működés:**
+- Sikeres kérés esetén a függvény visszaadja a backend válaszát.
+- Sikertelen kérés esetén egy érthető magyar hibaüzenetet tartalmazó `Error` objektumot dob.
+- A hibát a szülőoldal kezeli, majd továbbadja az űrlapnak megjelenítésre.
+
+**Példa Axios használatára:**
+```js
+import { api } from '@utils/http.mjs'
+
+export async function login({ email, password, remember }) {
+  try {
+    const { data } = await api.post('/login', { email, password })
+
+    // TODO: felhasználó/token tárolása (pl. Pinia segítségével)
+    return data
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.message ?? 'Sikertelen bejelentkezés.'
+    )
+  }
+}
+```
+
+**Jelszókezelés:**
+- A frontend a jelszót kizárólag HTTPS-kérés törzsében továbbítja.
+- A jelszó tárolását és hash-elését a backend végzi.
+- A frontend nem tárolja el a jelszót.
+- A backend által tárolt jelszó hash-elt formában (`passwordHash`) szerepel.
