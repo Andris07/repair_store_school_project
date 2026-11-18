@@ -354,6 +354,77 @@ A komponens három eseményt bocsáthat ki:
 - A `selectable`, `editable` és `removable` paraméterekkel külön-külön szabályozható a megfelelő műveleti lehetőségek megjelenítése.
 - A kiválasztás, szerkesztés és törlés tényleges végrehajtását a szülő komponensnek kell kezelnie az eseményeken keresztül.
 
+## Foglalási komponensek
+
+### [AppointmentSlotPicker.vue](../fullstack/frontend/src/components/booking/AppointmentSlotPicker.vue)
+
+Az `AppointmentSlotPicker` egy újrafelhasználható Vue komponens, amely dátum- és időpontválasztást biztosít időpontfoglalás során. Egy naptárat és a kiválasztott naphoz tartozó elérhető idősávokat jeleníti meg.
+
+A komponens figyelembe veszi a nyitvatartási napokat és időszakokat, a zárva tartó napokat, valamint a már lefoglalt időpontokat.
+
+**Használat:**
+
+```vue
+<AppointmentSlotPicker
+    v-model="slot"
+    :booked="['2026-11-16T09:00']"
+/>
+```
+
+**A `v-model` működése:**
+
+A kiválasztott időpontot szöveges formában adja vissza:
+
+`YYYY-MM-DDTHH:mm`
+
+Például:
+
+```js
+"2026-11-16T09:30"
+```
+
+Ha még nincs kiválasztott időpont, az érték üres szöveg (`''`).
+
+**A komponens paraméterei:**
+
+| Paraméter | Típus | Leírás |
+|---|---|---|
+| `booked` | `array` | A már lefoglalt idősávok tömbje. Formátum: `YYYY-MM-DDTHH:mm`. |
+| `closedDates` | `array` | A zárva tartó napok tömbje, például ünnepnapok. Formátum: `YYYY-MM-DD`. |
+| `openDays` | `array` | A nyitvatartási napokat meghatározó tömb. A hét napjai `0` (hétfő) és `6` (vasárnap) között adhatók meg. Alapértelmezés: hétfőtől péntekig. |
+| `open` | `string` | A napi nyitvatartás kezdete (`HH:mm`). Alapértelmezés: `08:00`. |
+| `close` | `string` | A napi nyitvatartás vége (`HH:mm`). Alapértelmezés: `17:00`. |
+| `slotMinutes` | `number` | Egy idősáv hossza percben. Alapértelmezés: `30`. |
+| `breakStart` | `string` | Az ebédszünet kezdete (`HH:mm`). |
+| `breakEnd` | `string` | Az ebédszünet vége (`HH:mm`). |
+| `maxDate` | `string` | A legkésőbbi foglalható dátum (`YYYY-MM-DD`). Alapértelmezés: nincs korlátozás. |
+| `label` | `string` | A komponens címkéje. |
+| `hint` | `string` | A dátum- és időpontválasztáshoz kapcsolódó kiegészítő információ. |
+| `error` | `string` | Megjelenítendő hibaüzenet. |
+| `disabled` | `boolean` | Meghatározza, hogy a komponens használható-e. |
+
+**A dátum- és időpontválasztás működése:**
+
+A komponens a megadott nyitvatartási feltételek alapján határozza meg, hogy mely dátumok és idősávok választhatók.
+
+- Csak a `openDays` paraméterben meghatározott munkanapok választhatók.
+- A `closedDates` paraméterben megadott napok nem választhatók.
+- A múltbeli dátumok és időpontok le vannak tiltva.
+- A `booked` tömbben szereplő idősávok nem választhatók.
+- A nyitvatartási időn kívüli időpontok nem érhetők el.
+- A `breakStart` és `breakEnd` paraméterekkel meghatározott ebédszünet idejére nem lehet időpontot foglalni.
+- A `maxDate` paraméterrel korlátozható a legkésőbbi foglalható dátum.
+
+**Fontos tudnivalók:**
+
+- A `booked` tömb elemeinek `YYYY-MM-DDTHH:mm` formátumú időpontokat kell tartalmazniuk.
+- A `closedDates` tömb elemeinek `YYYY-MM-DD` formátumú dátumokat kell tartalmazniuk.
+- A hét napjainak számozása `0` értéktől (hétfő) `6` értékig (vasárnap) történik.
+- Az idősávok hosszát a `slotMinutes` paraméter határozza meg.
+- A nyitvatartás és az ebédszünet időtartama a megfelelő paraméterekkel módosítható.
+- A `maxDate` elhagyásával nem kerül meghatározásra külön legkésőbbi foglalási dátum.
+- A komponens a kiválasztott időpontot a `v-model` segítségével továbbítja a szülő komponensnek.
+
 ## Navigációs és layout komponensek
 
 ### [navigation.mjs](../fullstack/frontend/src/utils/navigation.mjs)
