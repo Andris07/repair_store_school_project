@@ -210,6 +210,150 @@ Ilyenkor a komponens nem számolja meg az `appointments` tömb elemeit, hanem a 
 - A `count` paraméter elsőbbséget élvez a saját számítással szemben.
 - A komponens újrafelhasználható különböző adatok és szűrési feltételek mellett, így nem kizárólag a foglalások oldalán alkalmazható.
 
+## Gépjármű-kezelő komponensek
+
+### [VehicleSelect.vue](../fullstack/frontend/src/components/vehicles/VehicleSelect.vue)
+
+A `VehicleSelect` egy újrafelhasználható Vue komponens, amely gépjárművek kiválasztására szolgál, például időpontfoglalás során. A rendelkezésre álló gépjárműveket rádiógombos kártyák formájában jeleníti meg, amelyek egérrel és billentyűzettel (nyilakkal) egyaránt kezelhetők.
+
+A kiválasztott gépjármű azonosítóját a `v-model` segítségével adja vissza a szülő komponensnek.
+
+**Használat:**
+
+```vue
+<VehicleSelect
+    v-model="vehicleId"
+    :vehicles="vehicles"
+    :error="error"
+    @add="openAddForm"
+/>
+```
+
+**A komponens paraméterei:**
+
+| Paraméter | Típus | Leírás |
+|---|---|---|
+| `vehicles` | `array` | A megjeleníthető gépjárművek listája. |
+| `label` | `string` | A komponens címkéje. |
+| `hint` | `string` | A kiválasztáshoz kapcsolódó kiegészítő információ. |
+| `error` | `string` | Megjelenítendő hibaüzenet. |
+| `disabled` | `boolean` | Meghatározza, hogy a komponens használható-e. |
+| `name` | `string` | A rádiógombok neve. |
+| `addable` | `boolean` | Meghatározza, hogy megjelenjen-e az „Új gépjármű” gomb. |
+
+**A `v-model` működése:**
+
+A komponens kétirányú adatkapcsolatot biztosít a szülő komponenssel:
+
+- A kiválasztott gépjármű `id` értékét adja vissza.
+- Ha nincs kiválasztott gépjármű, az érték `null`.
+
+**Események:**
+
+| Esemény | Leírás |
+|---|---|
+| `add` | Új gépjármű hozzáadásának kezdeményezése. |
+
+**Fontos tudnivalók:**
+
+- A komponens a kiválasztást rádiógombos kártyák segítségével valósítja meg.
+- A kiválasztás billentyűzettel, a nyílbillentyűk használatával is kezelhető.
+- A `v-model` nem a teljes gépjármű objektumot, hanem annak azonosítóját tárolja.
+- Az új gépjármű hozzáadásához tartozó tényleges műveletet a szülő komponensnek kell kezelnie az `@add` eseményen keresztül.
+
+### [VehicleList.vue](../fullstack/frontend/src/components/vehicles/VehicleList.vue)
+
+A `VehicleList` egy újrafelhasználható Vue komponens, amely a felhasználó gépjárműveinek listázására szolgál. Kétféle megjelenítési módot támogat: görgethető listát és lapozható oldalakat.
+
+A komponens igény szerint kiválasztási, szerkesztési és törlési lehetőségeket is biztosít.
+
+**Használat:**
+
+Görgethető lista:
+
+```vue
+<VehicleList
+    :vehicles="vehicles"
+    mode="scroll"
+    height="22rem"
+    @select="handleSelect"
+/>
+```
+
+Lapozható lista:
+
+```vue
+<VehicleList
+    :vehicles="vehicles"
+    mode="pages"
+    :page-size="2"
+/>
+```
+
+**Megjelenítési módok:**
+
+| Mód | Leírás |
+|---|---|
+| `scroll` | Fix magasságú lista, amelynek tartalma belső görgetéssel tekinthető meg. A magasságot a `height` paraméter határozza meg. |
+| `pages` | Lapozható lista, amely egyszerre meghatározott számú gépjárművet jelenít meg. A lapméretet a `pageSize` paraméter határozza meg. |
+
+A `pageSize` alapértelmezett értéke `2`.
+
+**A gépjármű objektum felépítése:**
+
+```js
+{
+    id,
+    plate,
+    make,
+    model,
+    year,
+    note?
+}
+```
+
+| Mező | Leírás |
+|---|---|
+| `id` | A gépjármű egyedi azonosítója. |
+| `plate` | A gépjármű rendszáma. |
+| `make` | A gépjármű gyártója. |
+| `model` | A gépjármű modellje. |
+| `year` | A gépjármű gyártási éve. |
+| `note` | Opcionális megjegyzés. |
+
+**A komponens paraméterei:**
+
+| Paraméter | Típus | Leírás |
+|---|---|---|
+| `vehicles` | `array` | A megjelenítendő gépjárművek listája. |
+| `mode` | `string` | A megjelenítési mód (`scroll` vagy `pages`). |
+| `pageSize` | `number` | Egy oldalon megjelenített gépjárművek száma. Alapértelmezés: `2`. |
+| `height` | `string` | A görgethető lista magassága. |
+| `selectedId` | `number` vagy `string` | A kiválasztott gépjármű azonosítója. |
+| `title` | `string` | A lista címe. |
+| `emptyText` | `string` | A lista üres állapotában megjelenő szöveg. |
+| `selectable` | `boolean` | Meghatározza, hogy megjelenjen-e a kiválasztási lehetőség. |
+| `editable` | `boolean` | Meghatározza, hogy megjelenjen-e a szerkesztési lehetőség. |
+| `removable` | `boolean` | Meghatározza, hogy megjelenjen-e a törlési lehetőség. |
+
+**Események:**
+
+A komponens három eseményt bocsáthat ki:
+
+| Esemény | Leírás |
+|---|---|
+| `select` | Gépjármű kiválasztása. A teljes gépjármű objektumot adja át. |
+| `edit` | Gépjármű szerkesztésének kezdeményezése. A teljes gépjármű objektumot adja át. |
+| `remove` | Gépjármű törlésének kezdeményezése. A teljes gépjármű objektumot adja át. |
+
+**Fontos tudnivalók:**
+
+- A `mode` paraméter határozza meg a lista megjelenítési módját.
+- `scroll` módban a lista magasságát a `height` paraméter szabályozza.
+- `pages` módban a `pageSize` határozza meg az egy oldalon megjelenő elemek számát.
+- A `selectable`, `editable` és `removable` paraméterekkel külön-külön szabályozható a megfelelő műveleti lehetőségek megjelenítése.
+- A kiválasztás, szerkesztés és törlés tényleges végrehajtását a szülő komponensnek kell kezelnie az eseményeken keresztül.
+
 ## Navigációs és layout komponensek
 
 ### [navigation.mjs](../fullstack/frontend/src/utils/navigation.mjs)
