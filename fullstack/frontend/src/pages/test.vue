@@ -19,7 +19,9 @@ const loaders = import.meta.glob([
   '/src/components/reusable/*.vue',
   '/src/components/auth/*.vue',
   '/src/components/layout/*.vue',
-  '/src/layouts/*.vue'
+  '/src/layouts/*.vue',
+  '/src/components/vehicles/*.vue',
+  '/src/components/booking/*.vue',
 ])
 const router = useRouter()
 const components = shallowRef({})
@@ -76,6 +78,21 @@ const baseAppointments = [
   { id: 6, customer: 'Kovács Bence', plate: 'PQR-678', service: 'Gumicsere', date: dayOffset(2), status: 'rejected' }
 ]
 const appointments = ref(baseAppointments.map((a) => ({ ...a })))
+
+const cars = [
+  { id: 1, plate: 'ABC-123', make: 'Suzuki', model: 'Swift', year: 2018 },
+  { id: 2, plate: 'DEF-456', make: 'Skoda', model: 'Octavia', year: 2020 },
+  { id: 3, plate: 'GHI-789', make: 'Opel', model: 'Astra', year: 2015 },
+  { id: 4, plate: 'JKL-012', make: 'Ford', model: 'Focus', year: 2012 },
+  { id: 5, plate: 'MNO-345', make: 'VW', model: 'Golf', year: 2019 }
+]
+
+const dayKey = (offset) => {
+  const d = new Date()
+  d.setDate(d.getDate() + offset)
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+}
+const bookedSlots = ['08:00', '08:30', '09:00', '10:00', '13:00'].flatMap((t) => [1, 2, 3].map((o) => `${dayKey(o)}T${t}`))
 
 // ---------- demók ----------
 const demos = {
@@ -227,6 +244,45 @@ const demos = {
   AuthLayout: {
     description: 'Kétoszlopos belépő elrendezés (márkapanel 1280 px felett).',
     variants: [{ group: 'Alap', label: 'alap', props: {}, slot: 'A belépő kártya helye' }]
+  },
+  VehicleList: {
+    description: 'Gépjárműlista: fix magasságú görgethető, vagy 2-esével lapozható.',
+    events: ['select', 'edit', 'remove'],
+    itemClass: 'w-full max-w-xl',
+    variants: [
+      { group: 'Görgethető', label: '5 autó, 16rem', props: { vehicles: cars, mode: 'scroll', height: '16rem', selectable: true, editable: true, removable: true } },
+      { group: 'Lapozható', label: '2-esével', props: { vehicles: cars, mode: 'pages', pageSize: 2, selectable: true, removable: true } },
+      { group: 'Lapozható', label: '3-asával', props: { vehicles: cars, mode: 'pages', pageSize: 3 } },
+      { group: 'Kiemelt', label: 'selectedId=2', props: { vehicles: cars, mode: 'pages', selectedId: 2 } },
+      { group: 'Üres', label: 'nincs autó', props: { vehicles: [] } }
+    ]
+  },
+  VehicleSelect: {
+    description: 'Gépjármű kiválasztása (v-model: id). Nyilakkal is választható.',
+    events: ['add'],
+    model: true,
+    itemClass: 'w-96',
+    variants: [
+      { group: 'Állapotok', label: 'alap', props: { vehicles: cars.slice(0, 3), addable: true } },
+      { group: 'Állapotok', label: 'súgóval', props: { vehicles: cars.slice(0, 3), hint: 'Melyik autóhoz foglalsz?' } },
+      { group: 'Állapotok', label: 'hiba', props: { vehicles: cars.slice(0, 3), error: 'Válassz egy gépjárművet.' } },
+      { group: 'Állapotok', label: 'letiltva', props: { vehicles: cars.slice(0, 3), disabled: true } },
+      { group: 'Állapotok', label: 'üres', props: { vehicles: [] } }
+    ]
+  },
+  AppointmentSlotPicker: {
+    description: 'Naptár + idősávok. v-model: "ÉÉÉÉ-HH-NNTÓÓ:PP". Hétvége, múlt és foglalt idősáv nem választható.',
+    itemClass: 'w-full max-w-3xl',
+    model: true,
+    variants: [
+      { group: 'Alap', label: 'alap (H–P, 8–17)', props: {} },
+      { group: 'Alap', label: 'ebédszünettel', props: { breakStart: '12:00', breakEnd: '13:00' } },
+      { group: 'Foglalt idősávok', label: 'holnaptól 3 nap részben foglalt', props: { booked: bookedSlots } },
+      { group: 'Korlátok', label: 'szombat is nyitva, 1 órás sávok', props: { openDays: [0, 1, 2, 3, 4, 5], slotMinutes: 60 } },
+      { group: 'Korlátok', label: 'max. 14 nap előre', props: { maxDate: dayKey(14) } },
+      { group: 'Állapotok', label: 'hiba', props: { error: 'Válassz napot és időpontot.' } },
+      { group: 'Állapotok', label: 'letiltva', props: { disabled: true } }
+    ]
   }
 }
 
@@ -288,7 +344,7 @@ function listenersFor(name, variantKey, variant) {
     listeners[handler] = (data) => addLog(name, event, data)
   }
   if (demos[name].model) {
-    listeners.modelValue = models.value[variantKey] ?? ''
+    listeners.modelValue = models.value[variantKey] ?? variant.props.modelValue ?? ''
     listeners['onUpdate:modelValue'] = (v) => {
       models.value = { ...models.value, [variantKey]: v }
     }
