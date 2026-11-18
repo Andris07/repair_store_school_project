@@ -4,7 +4,7 @@ Az autószerviz-kezelő alkalmazás a szerviz működéséhez kapcsolódó adato
 
 ## Újrafelhasználható komponensek
 
-### [StatusBadge.vue](fullstack/frontend/src/components/reusable/StatusBadge.vue)
+### [StatusBadge.vue](../fullstack/frontend/src/components/reusable/StatusBadge.vue)
 
 A `StatusBadge` egy újrafelhasználható Vue komponens, amely különböző állapotok vizuális megjelenítésére szolgál (pl. „Függőben”, „Jóváhagyva”, „Lemondva”).
 
@@ -53,7 +53,7 @@ Több állapot megjelenítése listából:
 - A `displayBackground` elhagyható, ilyenkor a komponens alapértelmezetten megjeleníti a hátteret.
 - A komponens használatakor mindig a teljes `status` objektumot add át a `status` propnak.
 
-### [ActionButton.vue](fullstack/frontend/src/components/reusable/ActionButton.vue)
+### [ActionButton.vue](../fullstack/frontend/src/components/reusable/ActionButton.vue)
 
 Az `ActionButton` egy újrafelhasználható Vue komponens, amely különböző műveletek indítására szolgáló gombok megjelenítésére használható (pl. „Jóváhagy”, „Elutasít”, „Megnyit”).
 
@@ -122,7 +122,7 @@ function handleAction({ key, payload })
 - A projekt színrendszerének egységessége érdekében lehetőség szerint a `colors.css`-ben definiált tokeneket használd.
 - A komponens újrafelhasználhatóságának köszönhetően ugyanaz a gomb különböző oldalakon és különböző műveletekhez is alkalmazható.
 
-### [AppointmentSummaryCard.vue](fullstack/frontend/src/components/reusable/AppointmentSummaryCard.vue)
+### [AppointmentSummaryCard.vue](../fullstack/frontend/src/components/reusable/AppointmentSummaryCard.vue)
 
 Az `AppointmentSummaryCard` egy újrafelhasználható Vue komponens, amely összefoglaló kártyák megjelenítésére szolgál. Elsősorban az adminisztrációs felületeken, például a Foglalások oldal tetején használható különböző statisztikai adatok és darabszámok megjelenítésére.
 
@@ -212,7 +212,7 @@ Ilyenkor a komponens nem számolja meg az `appointments` tömb elemeit, hanem a 
 
 ## Navigációs és layout komponensek
 
-### [navigation.mjs](frontend/src/utils/navigation.mjs)
+### [navigation.mjs](../fullstack/frontend/src/utils/navigation.mjs)
 
 A `navigation.mjs` egy központi konfigurációs fájl, amely a felhasználói szerepkörökhöz tartozó navigációs menüpontokat és azok megjelenítéséhez szükséges adatokat tárolja. Emellett a szerepkörök azonosítóit és azok felhasználóbarát magyar megnevezéseit is exportálja.
 
@@ -254,7 +254,7 @@ export const navigation = {
 - Új menüpont hozzáadásakor a megfelelő szerepkör tömbjét kell bővíteni.
 - A menüpontok útvonalait és ikonjait ez a fájl központilag kezeli, így a navigációs felület komponenseinek nem kell külön definiálniuk ezeket az adatokat.
 
-### [SidebarContent.vue](frontend/src/components/layout/SidebarContent.vue)
+### [SidebarContent.vue](../fullstack/frontend/src/components/layout/SidebarContent.vue)
 
 A `SidebarContent` a navigációs oldalsáv tartalmát megjelenítő Vue komponens. Megjeleníti az alkalmazás nevét és kezdőbetűjét, az aktuális felhasználói szerepkör megnevezését, a szerepkörhöz tartozó navigációs menüpontokat, valamint a felhasználó nevét és a kijelentkezési lehetőséget.
 
@@ -302,7 +302,7 @@ A komponens két eseményt bocsát ki:
 - A komponens nem kezeli önállóan a kijelentkezést; ehhez a szülő komponensnek kell megadnia az `@logout` eseménykezelőt.
 - A `navigate` esemény mobilnézetben az oldalsáv bezárására is felhasználható.
 
-### [BaseSidebar.vue](frontend/src/components/layout/BaseSidebar.vue)
+### [BaseSidebar.vue](../fullstack/frontend/src/components/layout/BaseSidebar.vue)
 
 A `BaseSidebar` a navigációs oldalsáv külső, reszponzív keretét biztosító Vue komponens. Mobilnézetben felső fejlécet és abból megnyitható, bal oldalról behúzható menüt jelenít meg, nagyobb képernyőn pedig fix szélességű, bal oldali oldalsávként működik.
 
@@ -353,7 +353,7 @@ A komponens egy `logout` eseményt bocsát ki. A `SidebarContent` által kibocs�
 - A `role` és a `userName` paramétereket a komponens továbbadja a belső `SidebarContent` komponensnek.
 - A kijelentkezési logikát nem a `BaseSidebar` hajtja végre; a műveletet a szülő komponensnek kell kezelnie az `@logout` eseményen keresztül.
 
-### [BaseLayout.vue](frontend/src/layouts/BaseLayout.vue)
+### [BaseLayout.vue](../fullstack/frontend/src/layouts/BaseLayout.vue)
 
 A `BaseLayout` az alkalmazás oldalainak közös elrendezését biztosító Vue komponens. Egységes szerkezetbe rendezi a navigációs oldalsávot és az oldal aktuális tartalmát. A navigáció megjelenítéséhez a `BaseSidebar` komponenst használja, az oldalanként eltérő tartalmat pedig a Vue `slot` mechanizmusán keresztül fogadja.
 
