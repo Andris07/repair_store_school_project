@@ -210,6 +210,106 @@ Ilyenkor a komponens nem számolja meg az `appointments` tömb elemeit, hanem a 
 - A `count` paraméter elsőbbséget élvez a saját számítással szemben.
 - A komponens újrafelhasználható különböző adatok és szűrési feltételek mellett, így nem kizárólag a foglalások oldalán alkalmazható.
 
+## Szolgáltatás-kezelő komponensek
+
+### [ServiceSelect.vue](../fullstack/frontend/src/components/services/ServiceSelect.vue)
+
+A `ServiceSelect` egy újrafelhasználható Vue komponens, amely szolgáltatások kiválasztását teszi lehetővé kártyák segítségével. Időpontfoglalás során használható, és egyszeres, illetve többszörös kiválasztási módot is támogat. A kiválasztott szolgáltatás vagy szolgáltatások azonosítóit a `v-model` segítségével adja vissza a szülő komponensnek.
+
+Egyszeres módban rádiógombok, többszörös módban jelölőnégyzetek jelennek meg. A vezérlők billentyűzettel is kezelhetők.
+
+**Használat:**
+
+Egy szolgáltatás kiválasztása:
+
+```vue
+<ServiceSelect
+    v-model="serviceId"
+    :services="services"
+/>
+```
+
+Több szolgáltatás kiválasztása:
+
+```vue
+<ServiceSelect
+    v-model="serviceIds"
+    :services="services"
+    multiple
+/>
+```
+
+Keresőmezővel és kiegészítő szöveggel:
+
+```vue
+<ServiceSelect
+    v-model="serviceId"
+    :services="services"
+    searchable
+    label="Válassz szolgáltatást"
+    hint="Válaszd ki az elvégzendő munkát."
+/>
+```
+
+**A `services` lista elemeinek felépítése:**
+
+A lista minden eleme a `ServiceCard` által használt szolgáltatásobjektumot tartalmazza:
+
+```js
+{
+    id,
+    name,
+    description,
+    price,
+    duration_minutes?
+}
+```
+
+| Mező | Leírás |
+|---|---|
+| `id` | A szolgáltatás egyedi azonosítója; ezt az értéket adja vissza a `v-model`. |
+| `name` | A szolgáltatás neve, amely a kártyán és a keresés során is felhasználásra kerül. |
+| `description` | A szolgáltatás leírása, amely a keresés során szintén figyelembe vehető. |
+| `price` | A szolgáltatás ára, amely többszörös kiválasztásnál az összesítésbe is beleszámít. |
+| `duration_minutes` | Opcionális időtartam percben; többszörös kiválasztásnál az összesített időtartam része. |
+
+**A komponens paraméterei:**
+
+| Paraméter | Típus | Leírás |
+|---|---|---|
+| `services` | `array` | A megjeleníthető szolgáltatások listája. Alapértelmezett értéke üres tömb. |
+| `multiple` | `boolean` | Bekapcsolásakor több szolgáltatás választható ki jelölőnégyzetekkel. Alapértelmezett értéke `false`. |
+| `searchable` | `boolean` | Meghatározza, hogy megjelenjen-e a szolgáltatások szűrésére szolgáló keresőmező. Alapértelmezett értéke `false`. |
+| `label` | `string` | A kiválasztó címe. Alapértelmezett értéke `Szolgáltatás`. |
+| `hint` | `string` | A cím alatt megjelenő kiegészítő tájékoztató szöveg. |
+| `error` | `string` | A kiválasztó alatt megjelenő hibaüzenet. |
+| `disabled` | `boolean` | Letiltja a teljes kiválasztót és annak vezérlőit. Alapértelmezett értéke `false`. |
+| `name` | `string` | A rádiógombok vagy jelölőnégyzetek csoportjának neve. Ha nincs megadva, a komponens egyedi nevet generál. |
+
+**A `v-model` működése:**
+
+A komponens a kiválasztott szolgáltatások azonosítóit adja vissza, nem a teljes szolgáltatásobjektumokat.
+
+- Egyszeres módban a `v-model` egy szolgáltatás `id` értékét tartalmazza. Kezdeti alapértelmezett értéke `null`.
+- Többszörös módban a `v-model` a kiválasztott `id` értékek tömbje. Ha kezdetben nem tömböt kap, a komponens üres tömbre állítja.
+
+**Keresés:**
+
+A `searchable` paraméter bekapcsolásakor a komponens keresőmezőt jelenít meg. A keresés a szolgáltatások nevében és leírásában történik, kis- és nagybetűtől függetlenül. Ha nincs egyező szolgáltatás, a komponens külön üzenetet jelenít meg. Hat vagy több szolgáltatás esetén érdemes bekapcsolni a keresést.
+
+**Többszörös kiválasztás összesítése:**
+
+Ha a `multiple` be van kapcsolva, és legalább egy szolgáltatás ki van választva, a komponens az alján összesítést jelenít meg. Ez tartalmazza a kiválasztott szolgáltatások darabszámát, összesített árát, valamint – ha van megadott időtartam – az összesített időtartamot is.
+
+**Fontos tudnivalók:**
+
+- A komponens a szolgáltatásokat a `ServiceCard` komponens segítségével, tömörített (`compact`) kártyaként jeleníti meg.
+- Egyszeres módban rádiógombokkal, többszörös módban jelölőnégyzetekkel működik a kiválasztás.
+- A `v-model` mindig azonosítókat tárol, ezért az aktuális szolgáltatás adatai a `services` listából kérhetők le.
+- A `hint` szöveg csak akkor jelenik meg, ha nincs megadva `error`; hiba esetén a hibaüzenet látható.
+- A `disabled` a teljes mezőcsoportot letiltja.
+- Többszörös módban az ár és az időtartam az aktuálisan kiválasztott szolgáltatások alapján kerül összesítésre.
+
 ## Gépjármű-kezelő komponensek
 
 ### [ServiceCard.vue](../fullstack/frontend/src/components/services/ServiceCard.vue)
