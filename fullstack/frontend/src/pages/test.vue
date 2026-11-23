@@ -22,6 +22,7 @@ const loaders = import.meta.glob([
   '/src/layouts/*.vue',
   '/src/components/vehicles/*.vue',
   '/src/components/booking/*.vue',
+  '/src/components/services/*.vue',
 ])
 const router = useRouter()
 const components = shallowRef({})
@@ -93,6 +94,13 @@ const dayKey = (offset) => {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
 }
 const bookedSlots = ['08:00', '08:30', '09:00', '10:00', '13:00'].flatMap((t) => [1, 2, 3].map((o) => `${dayKey(o)}T${t}`))
+
+const svc = [
+  { id: 1, name: 'Olajcsere', description: 'Motorolaj és olajszűrő csere, szintellenőrzés.', price: 18000, duration_minutes: 60 },
+  { id: 2, name: 'Fékbetét csere', description: 'Első vagy hátsó fékbetét cseréje, fékrendszer-ellenőrzés.', price: 32000, duration_minutes: 90 },
+  { id: 3, name: 'Műszaki vizsga felkészítés', description: 'Teljes átvizsgálás a műszaki vizsga előtt.', price: 25000, duration_minutes: 120 },
+  { id: 4, name: 'Klímatöltés', description: 'Klímarendszer ellenőrzése és utántöltése.', price: 22000 }
+]
 
 // ---------- demók ----------
 const demos = {
@@ -283,7 +291,29 @@ const demos = {
       { group: 'Állapotok', label: 'hiba', props: { error: 'Válassz napot és időpontot.' } },
       { group: 'Állapotok', label: 'letiltva', props: { disabled: true } }
     ]
-  }
+  },
+  ServiceCard: {
+    description: 'Szolgáltatás kártya (név, leírás, ár, időtartam).',
+    itemClass: 'w-72',
+    variants: [
+      { group: 'Állapotok', label: 'alap', props: { service: svc[0] } },
+      { group: 'Állapotok', label: 'kiválasztva', props: { service: svc[1], selected: true } },
+      { group: 'Állapotok', label: 'kompakt', props: { service: svc[2], compact: true } },
+      { group: 'Állapotok', label: 'időtartam nélkül', props: { service: svc[3] } }
+    ]
+  },
+  ServiceSelect: {
+    description: 'Szolgáltatás(ok) kiválasztása. Egyszeres: id, többszörös: id-k tömbje.',
+    itemClass: 'w-full max-w-2xl',
+    model: true,
+    variants: [
+      { group: 'Egyszeres', label: 'alap', props: { services: svc } },
+      { group: 'Többszörös', label: 'összesítéssel', props: { services: svc, multiple: true, modelValue: [] } },
+      { group: 'Többszörös', label: 'kereshető', props: { services: svc, multiple: true, searchable: true, modelValue: [] } },
+      { group: 'Állapotok', label: 'hiba', props: { services: svc, error: 'Válassz egy szolgáltatást.' } },
+      { group: 'Állapotok', label: 'üres', props: { services: [] } }
+    ]
+  },
 }
 
 // ---------- fülek ----------
