@@ -3,6 +3,7 @@ import { computed, ref } from 'vue'
 import BaseLayout from '@layouts/BaseLayout.vue'
 import VehicleSelect from '@components/vehicles/VehicleSelect.vue'
 import ServiceSelect from '@components/services/ServiceSelect.vue'
+import BookingSummary from '@components/booking/BookingSummary.vue'
 import AppointmentSlotPicker from '@components/booking/AppointmentSlotPicker.vue'
 
 // TODO: valódi adat – GET /api/vehicles és GET /api/services (lásd @utils/http.mjs); addig mintaadat
@@ -31,6 +32,13 @@ const errors = computed(() => ({
 }))
 const show = (key) => (submitted.value ? errors.value[key] : '')
 
+const chosenVehicle = computed(() => vehicles.value.find((v) => v.id === vehicleId.value) ?? null)
+const chosenServices = computed(() => services.value.filter((s) => serviceIds.value.includes(s.id)))
+
+function goToStep(key) {
+  document.getElementById('step-' + key)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+}
+
 const sent = ref(false)
 function submit() {
   submitted.value = true
@@ -42,37 +50,50 @@ function submit() {
 
 <template>
   <BaseLayout role="customer" user-name="Kiss Péter">
-    <div class="mx-auto flex max-w-3xl flex-col gap-6">
+    <div class="mx-auto flex max-w-6xl flex-col gap-6">
       <h1 class="font-heading text-[32px] leading-10 font-semibold text-text">Időpontfoglalás</h1>
 
       <p v-if="sent" role="status" class="rounded-sm border border-ok bg-ok-soft px-4 py-3 text-sm leading-5 text-ok">
         A foglalás rögzítve (helyőrző). A jóváhagyásról értesítést kapsz.
       </p>
 
-      <form class="flex flex-col gap-8" novalidate @submit.prevent="submit">
-        <VehicleSelect v-model="vehicleId" label="1. Gépjármű" :vehicles="vehicles" :error="show('vehicle')" />
-        <ServiceSelect
+      <form class="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_22rem]" novalidate @submit.prevent="submit">
+        <div class="flex flex-col gap-8">
+        <div id="step-vehicle"><VehicleSelect v-model="vehicleId" label="1. Gépjármű" :vehicles="vehicles" :error="show('vehicle')" /></div>
+        <div id="step-services"><ServiceSelect
           v-model="serviceIds"
           label="2. Szolgáltatás"
           multiple
           :services="services"
           :error="show('services')"
-        />
-        <AppointmentSlotPicker
+        /></div>
+        <div id="step-slot"><AppointmentSlotPicker
           v-model="date"
           label="3. Kívánt időpont"
           :booked="booked"
           break-start="12:00"
           break-end="13:00"
           :error="show('date')"
-        />
+        /></div>
+        </div>
 
-        <button
-          type="submit"
-          class="w-full cursor-pointer rounded-sm bg-accent px-5 py-3 text-[15px] leading-5 font-semibold text-accent-text hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent sm:w-fit"
+        <BookingSummary
+          class="lg:sticky lg:top-8"
+          :vehicle="chosenVehicle"
+          :services="chosenServices"
+          :date-time="date"
+          editable
+          @edit="goToStep"
         >
-          Foglalás elküldése
-        </button>
+          <template #actions>
+            <button
+              type="submit"
+              class="w-full cursor-pointer rounded-sm bg-accent px-5 py-3 text-[15px] leading-5 font-semibold text-accent-text hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            >
+              Foglalás elküldése
+            </button>
+          </template>
+        </BookingSummary>
       </form>
     </div>
   </BaseLayout>
