@@ -600,6 +600,115 @@ A komponens a megadott nyitvatartási feltételek alapján határozza meg, hogy 
 - A `maxDate` elhagyásával nem kerül meghatározásra külön legkésőbbi foglalási dátum.
 - A komponens a kiválasztott időpontot a `v-model` segítségével továbbítja a szülő komponensnek.
 
+## Javítás-kezelő komponensek
+
+### [CurrentRepair.vue](../fullstack/frontend/src/components/repairs/CurrentRepair.vue)
+
+A `CurrentRepair` egy újrafelhasználható Vue komponens, amely egy foglaláshoz tartozó aktuális javítás állapotának és legfontosabb adatainak összefoglaló megjelenítésére szolgál.
+
+A komponens egyetlen foglaláshoz kapcsolódóan jeleníti meg a gépjármű adatait, az igénybe vett szolgáltatásokat, a javítás aktuális állapotát, valamint a javításhoz kapcsolódó eseményeket és frissítéseket.
+
+**Használat:**
+
+```vue
+<CurrentRepair :appointment="appointment" />
+```
+
+Műveleti gombok elhelyezése a kártya alján:
+
+```vue
+<CurrentRepair :appointment="appointment">
+    <template #actions>
+        <button @click="cancelAppointment(appointment.id)">
+            Lemondás
+        </button>
+    </template>
+</CurrentRepair>
+```
+
+**A `appointment` objektum felépítése:**
+
+```js
+{
+    id,
+    status,
+    date,
+    vehicle: {
+        plate,
+        make,
+        model,
+        year?
+    },
+    services: [
+        { name }
+    ],
+    worker?,
+    note?,
+    estimatedDone?,
+    updates?: [
+        {
+            at,
+            text
+        }
+    ]
+}
+```
+
+| Mező | Leírás |
+|---|---|
+| `id` | A foglalás egyedi azonosítója. |
+| `status` | A javítás aktuális állapota. |
+| `date` | A foglaláshoz tartozó dátum. |
+| `vehicle` | A javításhoz tartozó gépjármű adatai. |
+| `vehicle.plate` | A gépjármű rendszáma. |
+| `vehicle.make` | A gépjármű gyártója. |
+| `vehicle.model` | A gépjármű modellje. |
+| `vehicle.year` | Opcionális gyártási év. |
+| `services` | A foglaláshoz tartozó szolgáltatások listája. |
+| `services[].name` | Az adott szolgáltatás neve. |
+| `worker` | Opcionális, a javításért felelős munkatárs neve. |
+| `note` | Opcionális megjegyzés a javításhoz. |
+| `estimatedDone` | Opcionális, a javítás várható befejezési dátuma (`YYYY-MM-DD`). |
+| `updates` | Opcionális eseménylista, amely a javítás során történt változásokat tartalmazza. |
+| `updates[].at` | Az esemény időpontja (`YYYY-MM-DDTHH:mm`). |
+| `updates[].text` | Az eseményhez tartozó leírás. |
+
+**A `status` mező lehetséges értékei:**
+
+| Érték | Jelentés |
+|---|---|
+| `pending` | Függőben lévő foglalás. |
+| `approved` | Jóváhagyott foglalás. |
+| `progress` | Folyamatban lévő javítás. |
+| `done` | Befejezett javítás. |
+| `rejected` | Elutasított foglalás. |
+
+Az állapotokhoz tartozó megnevezések és egyéb megjelenítési beállítások az `@utils/statuses.mjs` fájlban találhatók.
+
+**A komponens paraméterei:**
+
+| Paraméter | Típus | Leírás |
+|---|---|---|
+| `appointment` | `object` | A megjelenítendő foglalás és a hozzá tartozó javítás adatai. |
+| `title` | `string` | A kártya címe. |
+
+**Slot:**
+
+A komponens egy névvel ellátott `actions` slotot biztosít. A slot tartalma a kártya alján jelenik meg, így például lemondási vagy egyéb műveleti gombok helyezhetők el benne.
+
+A slot tartalmának tényleges működését a komponenst használó szülő komponens kezeli.
+
+**Fontos tudnivalók:**
+
+- Az `appointment` objektum tartalmazza a javítás megjelenítéséhez szükséges adatokat.
+- A `vehicle` objektum a javításhoz tartozó gépjármű legfontosabb adatait tartalmazza.
+- A `services` tömb a foglaláshoz kapcsolódó szolgáltatásokat sorolja fel.
+- A `status` mező értékének az `@utils/statuses.mjs` fájlban meghatározott állapotok egyikének kell lennie.
+- A `worker`, `note`, `estimatedDone` és `updates` mezők opcionálisak.
+- Az eseménylista időpontjai `YYYY-MM-DDTHH:mm` formátumú szövegként adhatók meg.
+- Az `actions` slot lehetővé teszi, hogy a komponens különböző oldalakon eltérő műveleti gombokkal legyen kiegészíthető.
+- A komponens a megjelenítésért felel, a foglaláshoz kapcsolódó tényleges műveleteket a szülő komponensnek kell kezelnie.
+
 ## Navigációs és layout komponensek
 
 ### [navigation.mjs](../fullstack/frontend/src/utils/navigation.mjs)
