@@ -810,6 +810,67 @@ A slot tartalmának tényleges működését a komponenst használó szülő kom
 - Az `actions` slot lehetővé teszi, hogy a komponens különböző oldalakon eltérő műveleti gombokkal legyen kiegészíthető.
 - A komponens a megjelenítésért felel, a foglaláshoz kapcsolódó tényleges műveleteket a szülő komponensnek kell kezelnie.
 
+## Dolgozói javításkezelő komponensek
+
+### [WorkerRepairPanel.vue](../fullstack/frontend/src/components/repairs/WorkerRepairPanel.vue)
+
+A dolgozó nézetét biztosítja egy adott javításhoz. Megjeleníti ugyanazt az állapotkártyát, mint az ügyféloldali `CurrentRepair` komponens, alatta pedig a dolgozó számára elérhető vezérlőket.
+
+A dolgozó előre léptetheti a javítás állapotát, illetve új eseményeket rögzíthet a javítás történetéhez.
+
+**Használat:**
+
+```vue
+<WorkerRepairPanel
+    :repair="repair"
+    @status-change="onStatus"
+    @add-update="onUpdate"
+/>
+```
+
+**Javítás objektum felépítése:**
+
+A `repair` objektum a `CurrentRepair` komponens `appointment` paraméterével megegyező struktúrát használja, az alábbi opcionális mezőkkel kiegészítve:
+
+| Mező | Típus | Leírás |
+|---|---|---|
+| `customer` | `string` | Az ügyfél neve. |
+| `phone` | `string` | Az ügyfél telefonszáma. |
+
+**Paraméterek (Props):**
+
+| Paraméter | Típus | Leírás |
+|---|---|---|
+| `repair` | `object` | A javítás adatai. |
+| `busy` | `boolean` | Mentés közben letiltja a vezérlőket. |
+| `error` | `string` | A mentés során fellépő hibaüzenet. |
+
+**Események (Emits):**
+
+| Esemény | Adat | Leírás |
+|---|---|---|
+| `status-change` | `{ id, status }` | A javítás állapotának módosítását jelzi. |
+| `add-update` | `{ id, text }` | Új esemény hozzáadását jelzi a javításhoz. |
+
+**Elérhető állapotlépések:**
+
+A dolgozó kizárólag előre léptetheti a javítás állapotát:
+
+| Jelenlegi állapot | Következő állapot | Megjelenített művelet |
+|---|---|---|
+| `approved` | `progress` | Munka megkezdése |
+| `progress` | `done` | Késznek jelölöm |
+
+A `pending` és `rejected` állapotú javítások csak megtekinthetők. Ezek jóváhagyása az adminisztrátor feladata.
+
+**Fontos tudnivalók:**
+
+- A komponens a `CurrentRepair` komponenssel azonos javítási adatstruktúrát használja.
+- A `customer` és `phone` mezők opcionálisak.
+- A dolgozó nem módosíthatja tetszőlegesen a javítás állapotát, kizárólag a meghatározott lépések szerint haladhat előre.
+- A `busy` paraméter mentés közben letiltja a vezérlőket.
+- A `status-change` és `add-update` események továbbítják a módosítási igényeket a szülőkomponens felé.
+
 ## Navigációs és layout komponensek
 
 ### [navigation.mjs](../fullstack/frontend/src/utils/navigation.mjs)
