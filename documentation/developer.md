@@ -212,6 +212,81 @@ Ilyenkor a komponens nem számolja meg az `appointments` tömb elemeit, hanem a 
 
 ## Szolgáltatás-kezelő komponensek
 
+### [ServiceCard.vue](../fullstack/frontend/src/components/services/ServiceCard.vue)
+
+A `ServiceCard` egy újrafelhasználható Vue komponens, amely egy szolgáltatás adatait kártya formájában jeleníti meg. A kártyán a szolgáltatás neve, leírása, ára és – amennyiben rendelkezésre áll – időtartama látható. Elsősorban a szolgáltatások listázására és kiválasztott állapotának megjelenítésére használható.
+
+**Használat:**
+
+Alapértelmezett megjelenítés:
+
+```vue
+<ServiceCard :service="service" />
+```
+
+Kiválasztott állapot megjelenítése:
+
+```vue
+<ServiceCard :service="service" selected />
+```
+
+Tömörebb megjelenítés:
+
+```vue
+<ServiceCard :service="service" compact />
+```
+
+Műveleti gombok elhelyezése a kártya alján:
+
+```vue
+<ServiceCard :service="service">
+    <template #actions>
+        <button @click="editService(service)">Szerkeszt</button>
+        <button @click="deleteService(service.id)">Töröl</button>
+    </template>
+</ServiceCard>
+```
+
+**A `service` objektum felépítése:**
+
+```js
+{
+    id,
+    name,
+    description,
+    price,
+    duration_minutes?
+}
+```
+
+| Mező | Leírás |
+|---|---|
+| `id` | A szolgáltatás egyedi azonosítója. |
+| `name` | A szolgáltatás neve. |
+| `description` | A szolgáltatás rövid leírása. Ha nincs megadva vagy üres, a leírás nem jelenik meg. |
+| `price` | A szolgáltatás ára, formázott pénzösszegként megjelenítve. |
+| `duration_minutes` | Opcionális időtartam percben. Ha nincs megadva, az időtartam nem jelenik meg. |
+
+**A komponens paraméterei:**
+
+| Paraméter | Típus | Leírás |
+|---|---|---|
+| `service` | `object` | Kötelező szolgáltatásobjektum, amely a kártyán megjelenő adatokat tartalmazza. |
+| `selected` | `boolean` | Meghatározza, hogy a kártya kiválasztott állapotban jelenjen-e meg. Alapértelmezett értéke `false`. |
+| `compact` | `boolean` | Tömörebb megjelenítést állít be: kisebb belső térközt és rövidebb, legfeljebb két soros leírást használ. Alapértelmezett értéke `false`. |
+
+**Slot:**
+
+A komponens egy névvel ellátott `actions` slotot biztosít. A slot tartalma a kártya alján, elválasztó vonal alatt jelenik meg, ezért például adminisztrációs felületen szerkesztési és törlési gombok helyezhetők el benne.
+
+**Fontos tudnivalók:**
+
+- A `service` paraméter kötelező, a kártya ebből az objektumból jeleníti meg az adatokat.
+- A `duration_minutes` mező opcionális; hiányában a kártya nem jelenít meg időtartamot.
+- A `selected` paraméter kizárólag a kiválasztott állapot vizuális jelzését szabályozza.
+- A `compact` paraméter kisebb helyigényű megjelenítést biztosít, például szolgáltatásválasztó listában.
+- Az `actions` slot tartalmának tényleges működését a kártyát használó szülő komponens kezeli.
+
 ### [ServiceSelect.vue](../fullstack/frontend/src/components/services/ServiceSelect.vue)
 
 A `ServiceSelect` egy újrafelhasználható Vue komponens, amely szolgáltatások kiválasztását teszi lehetővé kártyák segítségével. Időpontfoglalás során használható, és egyszeres, illetve többszörös kiválasztási módot is támogat. A kiválasztott szolgáltatás vagy szolgáltatások azonosítóit a `v-model` segítségével adja vissza a szülő komponensnek.
@@ -309,81 +384,6 @@ Ha a `multiple` be van kapcsolva, és legalább egy szolgáltatás ki van válas
 - A `hint` szöveg csak akkor jelenik meg, ha nincs megadva `error`; hiba esetén a hibaüzenet látható.
 - A `disabled` a teljes mezőcsoportot letiltja.
 - Többszörös módban az ár és az időtartam az aktuálisan kiválasztott szolgáltatások alapján kerül összesítésre.
-
-### [ServiceCard.vue](../fullstack/frontend/src/components/services/ServiceCard.vue)
-
-A `ServiceCard` egy újrafelhasználható Vue komponens, amely egy szolgáltatás adatait kártya formájában jeleníti meg. A kártyán a szolgáltatás neve, leírása, ára és – amennyiben rendelkezésre áll – időtartama látható. Elsősorban a szolgáltatások listázására és kiválasztott állapotának megjelenítésére használható.
-
-**Használat:**
-
-Alapértelmezett megjelenítés:
-
-```vue
-<ServiceCard :service="service" />
-```
-
-Kiválasztott állapot megjelenítése:
-
-```vue
-<ServiceCard :service="service" selected />
-```
-
-Tömörebb megjelenítés:
-
-```vue
-<ServiceCard :service="service" compact />
-```
-
-Műveleti gombok elhelyezése a kártya alján:
-
-```vue
-<ServiceCard :service="service">
-    <template #actions>
-        <button @click="editService(service)">Szerkeszt</button>
-        <button @click="deleteService(service.id)">Töröl</button>
-    </template>
-</ServiceCard>
-```
-
-**A `service` objektum felépítése:**
-
-```js
-{
-    id,
-    name,
-    description,
-    price,
-    duration_minutes?
-}
-```
-
-| Mező | Leírás |
-|---|---|
-| `id` | A szolgáltatás egyedi azonosítója. |
-| `name` | A szolgáltatás neve. |
-| `description` | A szolgáltatás rövid leírása. Ha nincs megadva vagy üres, a leírás nem jelenik meg. |
-| `price` | A szolgáltatás ára, formázott pénzösszegként megjelenítve. |
-| `duration_minutes` | Opcionális időtartam percben. Ha nincs megadva, az időtartam nem jelenik meg. |
-
-**A komponens paraméterei:**
-
-| Paraméter | Típus | Leírás |
-|---|---|---|
-| `service` | `object` | Kötelező szolgáltatásobjektum, amely a kártyán megjelenő adatokat tartalmazza. |
-| `selected` | `boolean` | Meghatározza, hogy a kártya kiválasztott állapotban jelenjen-e meg. Alapértelmezett értéke `false`. |
-| `compact` | `boolean` | Tömörebb megjelenítést állít be: kisebb belső térközt és rövidebb, legfeljebb két soros leírást használ. Alapértelmezett értéke `false`. |
-
-**Slot:**
-
-A komponens egy névvel ellátott `actions` slotot biztosít. A slot tartalma a kártya alján, elválasztó vonal alatt jelenik meg, ezért például adminisztrációs felületen szerkesztési és törlési gombok helyezhetők el benne.
-
-**Fontos tudnivalók:**
-
-- A `service` paraméter kötelező, a kártya ebből az objektumból jeleníti meg az adatokat.
-- A `duration_minutes` mező opcionális; hiányában a kártya nem jelenít meg időtartamot.
-- A `selected` paraméter kizárólag a kiválasztott állapot vizuális jelzését szabályozza.
-- A `compact` paraméter kisebb helyigényű megjelenítést biztosít, például szolgáltatásválasztó listában.
-- Az `actions` slot tartalmának tényleges működését a kártyát használó szülő komponens kezeli.
 
 ## Gépjármű-kezelő komponensek
 
