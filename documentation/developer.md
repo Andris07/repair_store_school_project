@@ -310,8 +310,6 @@ Ha a `multiple` be van kapcsolva, és legalább egy szolgáltatás ki van válas
 - A `disabled` a teljes mezőcsoportot letiltja.
 - Többszörös módban az ár és az időtartam az aktuálisan kiválasztott szolgáltatások alapján kerül összesítésre.
 
-## Gépjármű-kezelő komponensek
-
 ### [ServiceCard.vue](../fullstack/frontend/src/components/services/ServiceCard.vue)
 
 A `ServiceCard` egy újrafelhasználható Vue komponens, amely egy szolgáltatás adatait kártya formájában jeleníti meg. A kártyán a szolgáltatás neve, leírása, ára és – amennyiben rendelkezésre áll – időtartama látható. Elsősorban a szolgáltatások listázására és kiválasztott állapotának megjelenítésére használható.
@@ -386,6 +384,8 @@ A komponens egy névvel ellátott `actions` slotot biztosít. A slot tartalma a 
 - A `selected` paraméter kizárólag a kiválasztott állapot vizuális jelzését szabályozza.
 - A `compact` paraméter kisebb helyigényű megjelenítést biztosít, például szolgáltatásválasztó listában.
 - Az `actions` slot tartalmának tényleges működését a kártyát használó szülő komponens kezeli.
+
+## Gépjármű-kezelő komponensek
 
 ### [VehicleSelect.vue](../fullstack/frontend/src/components/vehicles/VehicleSelect.vue)
 
