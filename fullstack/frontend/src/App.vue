@@ -1,5 +1,8 @@
-<script setup></script>
+<script setup>
+import NotificationHost from '@components/reusable/NotificationHost.vue';
+
+</script>
 
 <template>
-  <RouterView />
+  <RouterView /> <NotificationHost />
 </template>
