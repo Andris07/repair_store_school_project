@@ -531,6 +531,107 @@ A komponens három eseményt bocsáthat ki:
 
 ## Foglalási komponensek
 
+### [BookingSummary.vue](frontend/src/components/booking/BookingSummary.vue)
+
+A `BookingSummary` egy újrafelhasználható Vue komponens, amely a foglalás legfontosabb adatainak összegzésére szolgál. Megjeleníti a kiválasztott gépjárművet, a foglaláshoz tartozó szolgáltatásokat, az időpontot és a végösszeget.
+
+A komponens használható foglalás közben oldalsó összesítőként, valamint a foglalás véglegesítése előtt megerősítő nézetként is. Igény esetén az egyes részek módosítására is lehetőséget biztosít.
+
+**Használat:**
+
+```vue
+<BookingSummary
+    :vehicle="vehicle"
+    :services="chosenServices"
+    :date-time="slot"
+    editable
+    @edit="goToStep"
+>
+    <template #actions>
+        <button>Foglalás elküldése</button>
+    </template>
+</BookingSummary>
+```
+
+**A komponens paraméterei:**
+
+| Paraméter | Típus | Leírás |
+|---|---|---|
+| `vehicle` | `object` vagy `null` | A kiválasztott gépjármű adatai. Tartalmazza a rendszámot, gyártót, modellt és opcionálisan a gyártási évet. |
+| `services` | `array` | A kiválasztott szolgáltatások listája. A szolgáltatások azonosítót, nevet, árat és opcionálisan időtartamot tartalmaznak. |
+| `dateTime` | `string` | A kiválasztott időpont `YYYY-MM-DDTHH:mm` formátumban, vagy üres szöveg, ha nincs kiválasztva. |
+| `note` | `string` | Az ügyfél opcionális megjegyzése a foglaláshoz. |
+| `editable` | `boolean` | Meghatározza, hogy az egyes összegzési részeknél megjelenjenek-e a módosítási lehetőségek. |
+| `title` | `string` | Az összesítő címe. |
+
+**A gépjármű objektum felépítése:**
+
+```js
+{
+    plate,
+    make,
+    model,
+    year?
+}
+```
+
+**A szolgáltatás objektum felépítése:**
+
+```js
+{
+    id,
+    name,
+    price,
+    duration_minutes?
+}
+```
+
+**Események:**
+
+A komponens egy `edit` eseményt bocsát ki, amely jelzi, hogy a felhasználó melyik foglalási részt szeretné módosítani.
+
+| Esemény | Leírás |
+|---|---|
+| `edit` | A módosítandó foglalási rész azonosítóját adja át. Lehetséges értékek: `vehicle`, `services`, `slot`. |
+
+Az esemény segítségével a szülő komponens navigálhat a foglalás megfelelő lépésére.
+
+**Slot: actions:**
+
+A komponens `actions` slotja lehetőséget biztosít további műveleti elemek elhelyezésére az összesítő alján. Például a foglalás elküldésére szolgáló gomb is ezen keresztül adható meg.
+
+```vue
+<BookingSummary
+    :vehicle="vehicle"
+    :services="chosenServices"
+    :date-time="slot"
+>
+    <template #actions>
+        <button>Foglalás elküldése</button>
+    </template>
+</BookingSummary>
+```
+
+**Működés:**
+
+- Megjeleníti a kiválasztott gépjármű adatait.
+- Felsorolja a kiválasztott szolgáltatásokat.
+- Megjeleníti a kiválasztott időpontot.
+- Összegzi a szolgáltatások árait, és megjeleníti a végösszeget.
+- Megjeleníti az ügyfél által megadott megjegyzést, amennyiben rendelkezésre áll.
+- `editable` használatakor módosítási lehetőségeket biztosít az egyes foglalási részekhez.
+- Az `edit` eseményen keresztül jelzi a szülő komponensnek, hogy melyik részt szeretné a felhasználó módosítani.
+- Az `actions` sloton keresztül további gombok vagy műveleti elemek helyezhetők el az összesítő alján.
+
+**Fontos tudnivalók:**
+
+- A `vehicle` paraméter `null` értékű is lehet, ha még nincs kiválasztott gépjármű.
+- A `services` paraméter a kiválasztott szolgáltatásokat tartalmazza, ezek árai alapján kerül meghatározásra a végösszeg.
+- A `dateTime` paraméter üres szöveg is lehet, ha még nem történt időpontválasztás.
+- Az `editable` paraméterrel szabályozható a foglalás egyes részeinek módosíthatósága.
+- Az `edit` esemény nem hajtja végre önállóan a módosítást vagy a navigációt, hanem a szülő komponensnek adja át a megfelelő részt.
+- Az `actions` slot opcionális, így a komponens további műveleti elemek nélkül is használható.
+
 ### [AppointmentSlotPicker.vue](../fullstack/frontend/src/components/booking/AppointmentSlotPicker.vue)
 
 Az `AppointmentSlotPicker` egy újrafelhasználható Vue komponens, amely dátum- és időpontválasztást biztosít időpontfoglalás során. Egy naptárat és a kiválasztott naphoz tartozó elérhető idősávokat jeleníti meg.
