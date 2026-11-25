@@ -23,6 +23,7 @@ const loaders = import.meta.glob([
   '/src/components/vehicles/*.vue',
   '/src/components/booking/*.vue',
   '/src/components/services/*.vue',
+  '/src/components/repairs/*.vue',
 ])
 const router = useRouter()
 const components = shallowRef({})
@@ -101,6 +102,18 @@ const svc = [
   { id: 3, name: 'Műszaki vizsga felkészítés', description: 'Teljes átvizsgálás a műszaki vizsga előtt.', price: 25000, duration_minutes: 120 },
   { id: 4, name: 'Klímatöltés', description: 'Klímarendszer ellenőrzése és utántöltése.', price: 22000 }
 ]
+
+const car = { plate: 'ABC-123', make: 'Suzuki', model: 'Swift', year: 2018 }
+const repair = (status, extra = {}) => ({
+  id: 1,
+  status,
+  date: '2026-11-12',
+  vehicle: car,
+  services: [{ name: 'Fékbetét csere' }, { name: 'Olajcsere' }],
+  ...extra
+})
+
+const sumCar = { plate: 'ABC-123', make: 'Suzuki', model: 'Swift', year: 2018 }
 
 // ---------- demók ----------
 const demos = {
@@ -312,6 +325,50 @@ const demos = {
       { group: 'Többszörös', label: 'kereshető', props: { services: svc, multiple: true, searchable: true, modelValue: [] } },
       { group: 'Állapotok', label: 'hiba', props: { services: svc, error: 'Válassz egy szolgáltatást.' } },
       { group: 'Állapotok', label: 'üres', props: { services: [] } }
+    ]
+  },
+  CurrentRepair: {
+    description: 'Egy foglalás aktuális javítása: állapot, lépéssor, események. A status kulcs a @utils/statuses.mjs-ből.',
+    itemClass: 'w-full max-w-2xl',
+    variants: [
+      { group: 'Állapotok', label: 'pending', props: { appointment: repair('pending') } },
+      { group: 'Állapotok', label: 'approved', props: { appointment: repair('approved', { worker: 'Szabó Gábor' }) } },
+      {
+        group: 'Állapotok',
+        label: 'progress (eseményekkel)',
+        props: {
+          appointment: repair('progress', {
+            worker: 'Szabó Gábor',
+            estimatedDone: '2026-11-13',
+            note: 'A hátsó tárcsákat is cserélni kell.',
+            updates: [
+              { at: '2026-11-12T08:10', text: 'A jármű beérkezett a műhelybe.' },
+              { at: '2026-11-12T09:30', text: 'A javítás megkezdődött.' }
+            ]
+          })
+        }
+      },
+      { group: 'Állapotok', label: 'done', props: { appointment: repair('done', { worker: 'Szabó Gábor' }) } },
+      { group: 'Állapotok', label: 'rejected', props: { appointment: repair('rejected', { note: 'A kért napon nincs szabad kapacitás.' }) } }
+    ]
+  },
+  BookingSummary: {
+    description: 'Foglalás összegzése: gépjármű, szolgáltatások, időpont, végösszeg. A „Módosít” gomb `edit` eseményt küld.',
+    events: ['edit'],
+    itemClass: 'w-96',
+    variants: [
+      { group: 'Állapotok', label: 'üres', props: {} },
+      { group: 'Állapotok', label: 'részben kitöltött', props: { vehicle: sumCar, editable: true } },
+      {
+        group: 'Állapotok',
+        label: 'teljes',
+        props: { vehicle: sumCar, services: svc.slice(0, 2), dateTime: '2026-11-16T09:30', editable: true }
+      },
+      {
+        group: 'Állapotok',
+        label: 'megjegyzéssel',
+        props: { vehicle: sumCar, services: svc.slice(0, 3), dateTime: '2026-11-16T09:30', note: 'Kérem, hívjanak, ha további hiba derül ki.' }
+      }
     ]
   },
 }
